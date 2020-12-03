@@ -1,6 +1,5 @@
 import _ from 'lodash';
-import { useContext, useState } from 'react';
-import { browserHistory } from 'react-router';
+import { useContext, useEffect, useState } from 'react';
 import { ClusterOperation, WizardContext, WizardStepsFormData } from '../../UniverseWizard';
 import {
   CloudType,
@@ -60,10 +59,7 @@ const getPlacements = (formData: WizardStepsFormData): PlacementRegion[] => {
 };
 
 // fix some skewed/missing fields in config response
-const patchConfigResponse = (
-  response: UniverseDetails,
-  original: UniverseDetails
-) => {
+const patchConfigResponse = (response: UniverseDetails, original: UniverseDetails) => {
   const clusterIndex = 0; // TODO: change to dynamic when support async clusters
 
   response.clusterOperation = original.clusterOperation;
@@ -76,15 +72,35 @@ const patchConfigResponse = (
   userIntent.tserverGFlags = original.clusters[clusterIndex].userIntent.tserverGFlags;
 };
 
-export const useLaunchUniverse = () => {
+const checkForFullMove = (data: UniverseConfigure): boolean => {
+  // TODO: detect if full move is going to happen by analyzing data.nodeDetailsSet
+  return false; // <-- TEMP
+};
+
+export enum ConfigureUniverseStatus {
+  Loading,
+  Success,
+  Failure,
+  NoChanges
+}
+
+interface ConfigureUniverseHook {
+  status: ConfigureUniverseStatus;
+  isFullMove?: boolean;
+  data?: UniverseConfigure;
+  error?: Error;
+}
+
+export const useConfigureUniverse = (enabled: boolean): ConfigureUniverseHook => {
   const { formData, originalFormData, operation, universe } = useContext(WizardContext);
-  const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState(ConfigureUniverseStatus.Loading);
+  const [isFullMove, setIsFullMove] = useState<boolean>();
+  const [data, setData] = useState<UniverseConfigure>();
+  const [error, setError] = useState<Error>();
   const whenMounted = useWhenMounted();
 
-  const launchUniverse = async () => {
+  const configureUniverse = async () => {
     try {
-      setIsLoading(true);
-
       switch (operation) {
         case ClusterOperation.NEW_PRIMARY: {
           // convert form data into payload suitable for the configure api call
@@ -155,8 +171,10 @@ export const useLaunchUniverse = () => {
           const finalPayload = await api.universeConfigure(interimConfigure);
           patchConfigResponse(finalPayload, configurePayload as UniverseDetails);
 
-          // now everything is ready to create universe
-          await api.universeCreate(finalPayload);
+          whenMounted(() => {
+            setData(finalPayload);
+            setStatus(ConfigureUniverseStatus.Success);
+          });
           break;
         }
 
@@ -182,23 +200,28 @@ export const useLaunchUniverse = () => {
             const finalPayload = await api.universeConfigure(payload);
             patchConfigResponse(finalPayload, payload);
 
-            // TODO: detect if full move is going to happen by analyzing finalPayload.nodeDetailsSet
-            // TODO: maybe consider universe.universeDetails.updateInProgress to avoid edits while it's true
-
-            await api.universeEdit(finalPayload, universe.universeUUID);
+            whenMounted(() => {
+              setData(finalPayload);
+              setStatus(ConfigureUniverseStatus.Success);
+              setIsFullMove(checkForFullMove(finalPayload));
+            });
           } else {
-            console.log('Nothing to update - no fields changed');
+            whenMounted(() => setStatus(ConfigureUniverseStatus.NoChanges));
           }
           break;
         }
       }
     } catch (error) {
-      console.error(error);
-    } finally {
-      whenMounted(() => setIsLoading(false));
-      browserHistory.push('/universes');
+      whenMounted(() => {
+        setError(error);
+        setStatus(ConfigureUniverseStatus.Failure);
+      });
     }
   };
 
-  return { isLaunchingUniverse: isLoading, launchUniverse };
+  useEffect(() => {
+    if (enabled) configureUniverse();
+  }, [enabled]);
+
+  return { status, isFullMove, data, error };
 };

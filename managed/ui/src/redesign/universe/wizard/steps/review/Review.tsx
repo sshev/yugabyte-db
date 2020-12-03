@@ -1,10 +1,11 @@
 import _ from 'lodash';
 import { useQuery } from 'react-query';
-import React, { Dispatch, FC, ReactNode, useContext } from 'react';
+import { browserHistory } from 'react-router';
+import React, { Dispatch, FC, ReactNode, useContext, useState } from 'react';
 import { Col, Grid, Row } from 'react-bootstrap';
 import pluralize from 'pluralize';
 import { I18n } from '../../../../uikit/I18n/I18n';
-import { WizardAction, WizardContext } from '../../UniverseWizard';
+import { ClusterOperation, WizardAction, WizardContext } from '../../UniverseWizard';
 import { Button } from '../../../../uikit/Button/Button';
 import { WizardStep, WizardStepper } from '../../compounds/WizardStepper/WizardStepper';
 import { Summary } from '../../compounds/Summary/Summary';
@@ -12,9 +13,10 @@ import { api, QUERY_KEY } from '../../../../helpers/api';
 import { sortVersionStrings } from '../../../../../utils/ObjectUtils';
 import { YBLoading } from '../../../../../components/common/indicators/index';
 import { ReviewSection } from '../../compounds/ExpandableSection/ReviewSection';
-import { useLaunchUniverse } from './reviewHelpers';
+import { ConfigureUniverseStatus, useConfigureUniverse } from './reviewHelpers';
 import { CloudType } from '../../../../helpers/dtos';
 import { cloudProviders } from '../instance/InstanceConfig';
+import { useWhenMounted } from '../../../../helpers/hooks';
 import '../StepWrapper.scss';
 import './Review.scss';
 
@@ -52,8 +54,19 @@ const renderValue = (value: unknown): ReactNode => {
 };
 
 export const Review: FC<ReviewProps> = ({ dispatch }) => {
-  const { formData } = useContext(WizardContext);
-  const { isLaunchingUniverse, launchUniverse } = useLaunchUniverse();
+  const { formData, operation } = useContext(WizardContext);
+  const [isLaunchingUniverse, setIsLaunchingUniverse] = useState(false);
+  const [launchError, setLaunchError] = useState<Error>();
+  const whenMounted = useWhenMounted();
+  const {
+    status: configureUniverseStatus,
+    data: finalPayload,
+    isFullMove,
+    error: configureUniverseError
+  } = useConfigureUniverse(
+    // trigger configure call when DB version and access key are defined only
+    !!formData.dbConfig.ybSoftwareVersion && !!formData.hiddenConfig.accessKeyCode
+  );
 
   // populate DB Version field if it's not set (i.e. user jumped to the Review step skipping DB Config)
   const { isLoading: isDBVersionLoading } = useQuery(QUERY_KEY.getDBVersions, api.getDBVersions, {
@@ -112,20 +125,54 @@ export const Review: FC<ReviewProps> = ({ dispatch }) => {
     api.getKMSConfigs
   );
 
-  const cancel = () => dispatch({ type: 'exit_wizard', payload: true });
-  const jumpToStep = (nextStep: WizardStep) => dispatch({ type: 'change_step', payload: nextStep });
-
   const isLoading =
+    configureUniverseStatus === ConfigureUniverseStatus.Loading ||
     isDBVersionLoading ||
     isAccessKeyLoading ||
     isProvidersLoading ||
     isCertificatesLoading ||
     isKmsConfigsLoading;
 
+  const isLaunchAllowed =
+    !isLaunchingUniverse &&
+    configureUniverseStatus === ConfigureUniverseStatus.Success &&
+    finalPayload &&
+    !finalPayload.updateInProgress &&
+    !finalPayload.backupInProgress;
+
+  const cancel = () => dispatch({ type: 'exit_wizard', payload: true });
+  const jumpToStep = (nextStep: WizardStep) => dispatch({ type: 'change_step', payload: nextStep });
+
+  const launchUniverse = async (): Promise<void> => {
+    if (!isLaunchAllowed || !finalPayload) return;
+
+    try {
+      setIsLaunchingUniverse(true);
+
+      switch (operation) {
+        case ClusterOperation.NEW_PRIMARY: {
+          await api.universeCreate(finalPayload);
+          break;
+        }
+        case ClusterOperation.EDIT_PRIMARY: {
+          await api.universeEdit(finalPayload, finalPayload.universeUUID!);
+          break;
+        }
+      }
+
+      browserHistory.push('/universes');
+    } catch (error) {
+      console.error(error); // <-- TEMP
+      setLaunchError(error);
+    } finally {
+      whenMounted(() => setIsLaunchingUniverse(false));
+    }
+  };
+
   return (
     <div className="wizard-step-wrapper">
       <div className="wizard-step-wrapper__stepper">
-        <WizardStepper activeStep={WizardStep.Review} clickableTabs={true} onChange={jumpToStep} />
+        <WizardStepper activeStep={WizardStep.Review} clickableTabs onChange={jumpToStep} />
       </div>
       <div className="wizard-step-wrapper__container">
         <div className="wizard-step-wrapper__col-form">
@@ -135,6 +182,37 @@ export const Review: FC<ReviewProps> = ({ dispatch }) => {
                 <YBLoading />
               ) : (
                 <>
+                  {configureUniverseError && (
+                    <div className="review-step__notification review-step__notification--error">
+                      {configureUniverseError.message}
+                    </div>
+                  )}
+                  {launchError && (
+                    <div className="review-step__notification review-step__notification--error">
+                      {launchError.message}
+                    </div>
+                  )}
+                  {finalPayload?.updateInProgress && (
+                    <div className="review-step__notification review-step__notification--warning">
+                      <I18n>Universe is upgrading at the moment</I18n>
+                    </div>
+                  )}
+                  {finalPayload?.backupInProgress && (
+                    <div className="review-step__notification review-step__notification--warning">
+                      <I18n>Backup is in progress at the moment</I18n>
+                    </div>
+                  )}
+                  {isFullMove && (
+                    <div className="review-step__notification review-step__notification--warning">
+                      <I18n>Full move is going to happen with the suggested changes</I18n>
+                    </div>
+                  )}
+                  {configureUniverseStatus === ConfigureUniverseStatus.NoChanges && (
+                    <div className="review-step__notification review-step__notification--warning">
+                      <I18n>There are no changes to the universe</I18n>
+                    </div>
+                  )}
+
                   <ReviewSection
                     title={<I18n>Cloud Config</I18n>}
                     expanded
@@ -405,7 +483,7 @@ export const Review: FC<ReviewProps> = ({ dispatch }) => {
                 isCTA
                 className="review-step__footer-btn"
                 onClick={launchUniverse}
-                disabled={isLaunchingUniverse}
+                disabled={!isLaunchAllowed}
               >
                 <I18n>Launch Universe</I18n>
               </Button>

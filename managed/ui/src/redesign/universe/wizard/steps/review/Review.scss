@@ -20,4 +20,20 @@
     font-size: 14px;
     font-weight: 700;
   }
+
+  &__notification {
+    padding: 20px;
+    border: 1px solid $YB_BORDER_2;
+    margin-bottom: 30px;
+    font-size: 16px;
+    font-weight: 600;
+
+    &--warning {
+      background-color: rgba($YB_WARNING, 0.15);
+    }
+
+    &--error {
+      background-color: rgba($YB_ERROR, 0.35);
+    }
+  }
 }

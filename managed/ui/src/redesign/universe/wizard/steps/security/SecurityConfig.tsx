@@ -166,7 +166,7 @@ export const SecurityConfig: FC<SecurityConfigProps> = ({ dispatch }) => {
                 <I18n>Review and Launch</I18n>
               </Button>
             </div>
-
+            {/*
             <Row>
               <Col xs={4}>
                 <pre>Form Values: {JSON.stringify(formMethods.watch(), null, 8)}</pre>
@@ -178,7 +178,7 @@ export const SecurityConfig: FC<SecurityConfigProps> = ({ dispatch }) => {
                 <pre>Errors: {JSON.stringify(formMethods.errors, null, 8)}</pre>
               </Col>
             </Row>
-
+            */}
           </FormProvider>
         </div>
         <div className="wizard-step-wrapper__col-summary">
