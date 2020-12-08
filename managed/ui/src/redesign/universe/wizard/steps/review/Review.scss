@@ -9,16 +9,21 @@
 
   &__row {
     margin-top: 15px;
-    padding: 0 50px;
   }
 
   &__field-title {
-    font-size: 14px;
+    font-size: 16px;
+    text-align: right;
   }
 
   &__field-value {
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 600;
+    word-break: break-all;
+
+    &--highlight {
+      color: $YB_CTA;
+    }
   }
 
   &__notification {
@@ -27,6 +32,10 @@
     margin-bottom: 30px;
     font-size: 16px;
     font-weight: 600;
+
+    &--info {
+      background-color: rgba($YB_WIZARD_STEPPER_ACTIVE, 0.1);
+    }
 
     &--warning {
       background-color: rgba($YB_WARNING, 0.15);

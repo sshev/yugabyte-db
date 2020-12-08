@@ -6,6 +6,7 @@ import {
   ClusterType,
   FlagsArray,
   FlagsObject,
+  NodeDetails,
   PlacementAZ,
   PlacementRegion,
   UniverseConfigure,
@@ -72,9 +73,19 @@ const patchConfigResponse = (response: UniverseDetails, original: UniverseDetail
   userIntent.tserverGFlags = original.clusters[clusterIndex].userIntent.tserverGFlags;
 };
 
-const checkForFullMove = (data: UniverseConfigure): boolean => {
-  // TODO: detect if full move is going to happen by analyzing data.nodeDetailsSet
-  return false; // <-- TEMP
+const checkForFullMove = (nodeDetailsSet: NodeDetails[]): boolean => {
+  // remove all nodes that are:
+  // - without names
+  // - with "readonly" in the name (by convention it's nodes from async clusters)
+  // - ones that are going to be removed
+  // if there are no nodes left - it's a full move detected
+  // TODO: validate "full move" detection logic and support async clusters
+  const remainingNodes = nodeDetailsSet.filter(
+    (node) => node.nodeName && !node.nodeName.includes('readonly') && node.state !== 'ToBeRemoved'
+  );
+
+  // if there are no remaining nodes - it's a full move
+  return !remainingNodes.length;
 };
 
 export enum ConfigureUniverseStatus {
@@ -203,7 +214,7 @@ export const useConfigureUniverse = (enabled: boolean): ConfigureUniverseHook =>
             whenMounted(() => {
               setData(finalPayload);
               setStatus(ConfigureUniverseStatus.Success);
-              setIsFullMove(checkForFullMove(finalPayload));
+              setIsFullMove(checkForFullMove(finalPayload.nodeDetailsSet));
             });
           } else {
             whenMounted(() => setStatus(ConfigureUniverseStatus.NoChanges));

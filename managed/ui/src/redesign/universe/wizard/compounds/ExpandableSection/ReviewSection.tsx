@@ -14,7 +14,7 @@ export const ReviewSection: FC<ReviewSectionProps> = ({
 }) => (
   <BaseExpandableSection
     title={title}
-    fixedTitleWidth={155}
+    fixedTitleWidth={165}
     expanded={expanded}
     showLine
     editLink={<I18n>Edit</I18n>}

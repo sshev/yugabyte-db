@@ -19,6 +19,10 @@
     font-size: 30px;
     font-weight: 600;
     color: $YB_TEXT_1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 1200px;
   }
 
   &__beta {

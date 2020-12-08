@@ -18,7 +18,7 @@ export const defaultPorts: CommunicationPorts = {
   nodeExporterPort: 9300
 };
 
-const portsConfig = [
+export const portLabels = [
   { label: 'Master HTTP Port', prop: 'masterHttpPort' },
   { label: 'Master RPC Port', prop: 'masterRpcPort' },
   { label: 'T-Server HTTP Port', prop: 'tserverHttpPort' },
@@ -47,7 +47,7 @@ export const CommunicationPortsEditor: FC<CommunicationPortsEditorProps> = ({
 }) => {
   return (
     <div className="communication-ports-editor">
-      {portsConfig.map((item) => (
+      {portLabels.map((item) => (
         <div key={item.prop} className="communication-ports-editor__item">
           <div className="communication-ports-editor__label">
             <I18n>{item.label}</I18n>
