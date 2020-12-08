@@ -83,9 +83,9 @@ const getDeviceInfoFromInstance = (instance: InstanceType): DeviceInfo | null =>
 };
 
 export const DeviceInfoField: FC = () => {
-  const { control, watch, setValue } = useFormContext<InstanceConfigFormValue>();
+  const { control, watch, setValue, getValues } = useFormContext<InstanceConfigFormValue>();
   const instanceType = watch('instanceType');
-  const { formData } = useContext(WizardContext);
+  const { formData, originalFormData, isEditMode } = useContext(WizardContext);
   const { data: instanceTypes } = useQuery(
     [QUERY_KEY.getInstanceTypes, formData.cloudConfig.provider?.uuid],
     () => api.getInstanceTypes(formData.cloudConfig.provider?.uuid),
@@ -103,6 +103,10 @@ export const DeviceInfoField: FC = () => {
   }, [instanceType]);
 
   const validate = () => true; // TODO
+
+  // flag to disable inputs as editing volume info without changing the instance type makes no sense
+  const isInstanceTypeChanged =
+    isEditMode && getValues('instanceType') === originalFormData.instanceConfig.instanceType;
 
   return (
     <Controller
@@ -125,8 +129,11 @@ export const DeviceInfoField: FC = () => {
                   <div className="device-info-field__inputs-block device-info-field__inputs-block--volume">
                     <Input
                       type="number"
-                      // don't allow changing volumes number for onprem provider
-                      disabled={formData.cloudConfig.provider?.code === CloudType.onprem}
+                      // forbid editing volume for onprem providers or when instance type is unchanged
+                      disabled={
+                        formData.cloudConfig.provider?.code === CloudType.onprem ||
+                        isInstanceTypeChanged
+                      }
                       min={1}
                       className="device-info-field__num-input"
                       onBlur={onBlur}
@@ -139,10 +146,11 @@ export const DeviceInfoField: FC = () => {
                     <span className="device-info-field__x-symbol" />
                     <Input
                       type="number"
-                      // don't allow changing volume size for GCP or onprem providers
+                      // don't allow changing volume size for GCP/onprem providers or when instance type is unchanged
                       disabled={
                         formData.cloudConfig.provider?.code === CloudType.gcp ||
-                        formData.cloudConfig.provider?.code === CloudType.onprem
+                        formData.cloudConfig.provider?.code === CloudType.onprem ||
+                        isInstanceTypeChanged
                       }
                       min={1}
                       className="device-info-field__num-input"
@@ -165,7 +173,7 @@ export const DeviceInfoField: FC = () => {
                       <Select<StorageTypeOption>
                         isSearchable={false}
                         isClearable={false}
-                        isDisabled={false}
+                        isDisabled={isInstanceTypeChanged}
                         className="device-info-field__storage-type"
                         value={getStorageTypeOptions(formData.cloudConfig.provider?.code).find(
                           (item) => item.value === deviceInfoFormValue.storageType
@@ -201,11 +209,14 @@ export const DeviceInfoField: FC = () => {
                       {(deviceInfoFormValue.storageType === StorageType.IO1 ||
                         deviceInfoFormValue.storageType === StorageType.GP3) && (
                         <>
-                          <I18n className="device-info-field__label device-info-field__label--margin-right">Provisioned IOPS</I18n>
+                          <I18n className="device-info-field__label device-info-field__label--margin-right">
+                            Provisioned IOPS
+                          </I18n>
                           <Input
                             type="number"
                             min={1}
                             className="device-info-field__num-input"
+                            disabled={isInstanceTypeChanged}
                             onBlur={onBlur}
                             value={deviceInfoFormValue.diskIops ||
                               (deviceInfoFormValue.storageType === StorageType.IO1 ? DEFAULT_IOPS_IO1 : DEFAULT_IOPS_GP3)}
