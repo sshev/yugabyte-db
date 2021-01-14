@@ -11,10 +11,10 @@ import { Button } from '../../../../uikit/Button/Button';
 import { WizardStep, WizardStepper } from '../../compounds/WizardStepper/WizardStepper';
 import { Summary } from '../../compounds/Summary/Summary';
 import { api, QUERY_KEY } from '../../../../helpers/api';
-import { sortVersionStrings } from '../../../../../utils/ObjectUtils';
 import { YBLoading } from '../../../../../components/common/indicators/index';
 import { ReviewSection } from '../../compounds/ExpandableSection/ReviewSection';
-import { ConfigureUniverseStatus, useConfigureUniverse } from './reviewHelpers';
+import { ConfigureUniverseStatus, useConfigureUniverse } from './hooks/useConfigureUniverse';
+import { usePopulateMissingFields } from './hooks/usePopulateMissingFields';
 import { CloudType } from '../../../../helpers/dtos';
 import { cloudProviders } from '../instance/InstanceConfig';
 import { useWhenMounted } from '../../../../helpers/hooks';
@@ -58,70 +58,24 @@ const renderValue = (value: unknown): ReactNode => {
 export const Review: FC<ReviewProps> = ({ dispatch }) => {
   const { formData, originalFormData, operation } = useContext(WizardContext);
   const [isLaunchingUniverse, setIsLaunchingUniverse] = useState(false);
-  const [launchError, setLaunchError] = useState<Error>();
+  const [launchError, setLaunchError] = useState<string>();
   const whenMounted = useWhenMounted();
+  const { isLoadingMissingFields, isMissingFieldsPopulated } = usePopulateMissingFields(dispatch);
   const {
     status: configureUniverseStatus,
     data: finalPayload,
     isFullMove,
     error: configureUniverseError
-  } = useConfigureUniverse(
-    // trigger configure call when DB version and access key are defined only
-    !!formData.dbConfig.ybSoftwareVersion && !!formData.hiddenConfig.accessKeyCode
-  );
-
-  // populate DB Version field if it's not set (i.e. user jumped to the Review step skipping DB Config)
-  const { isLoading: isDBVersionLoading } = useQuery(QUERY_KEY.getDBVersions, api.getDBVersions, {
-    enabled: !formData.dbConfig.ybSoftwareVersion,
-    onSuccess: (data) => {
-      // pre-select first available db version
-      const sorted: string[] = sortVersionStrings(data);
-      dispatch({
-        type: 'update_form_data',
-        payload: {
-          dbConfig: {
-            ...formData.dbConfig,
-            ybSoftwareVersion: sorted[0]
-          }
-        }
-      });
-    }
-  });
-
-  // get access key for provider as we don't have such field in UI
-  const { isLoading: isAccessKeyLoading } = useQuery(
-    [QUERY_KEY.getAccessKeys, formData.cloudConfig.provider?.uuid],
-    () => api.getAccessKeys(formData.cloudConfig.provider?.uuid),
-    {
-      // prevent query from running for edit mode or when there's no provider set
-      enabled: !formData.hiddenConfig.accessKeyCode && !!formData.cloudConfig.provider?.uuid,
-      onSuccess: (data) => {
-        // currently there's single access key per provider, so just take first item from an array
-        if (!_.isEmpty(data)) {
-          dispatch({
-            type: 'update_form_data',
-            payload: {
-              hiddenConfig: {
-                ...formData.hiddenConfig,
-                accessKeyCode: data[0].idKey.keyCode
-              }
-            }
-          });
-        }
-      }
-    }
-  );
+  } = useConfigureUniverse(isMissingFieldsPopulated);
 
   const { isLoading: isProvidersLoading, data: providersList } = useQuery(
     QUERY_KEY.getProvidersList,
     api.getProvidersList
   );
-
   const { isLoading: isCertificatesLoading, data: certificatesList } = useQuery(
     QUERY_KEY.getCertificates,
     api.getCertificates
   );
-
   const { isLoading: isKmsConfigsLoading, data: kmsConfigs } = useQuery(
     QUERY_KEY.getKMSConfigs,
     api.getKMSConfigs
@@ -129,8 +83,7 @@ export const Review: FC<ReviewProps> = ({ dispatch }) => {
 
   const isLoading =
     configureUniverseStatus === ConfigureUniverseStatus.Loading ||
-    isDBVersionLoading ||
-    isAccessKeyLoading ||
+    isLoadingMissingFields ||
     isProvidersLoading ||
     isCertificatesLoading ||
     isKmsConfigsLoading;
@@ -164,12 +117,12 @@ export const Review: FC<ReviewProps> = ({ dispatch }) => {
           await api.universeEdit(finalPayload, finalPayload.universeUUID!);
           break;
         }
+        // TODO: support NEW_ASYNC and EDIT_ASYNC
       }
 
       browserHistory.push('/universes');
     } catch (error) {
-      console.error(error); // <-- TEMP
-      setLaunchError(error);
+      setLaunchError(error.response?.data?.error || error.message);
     } finally {
       whenMounted(() => setIsLaunchingUniverse(false));
     }
@@ -190,12 +143,12 @@ export const Review: FC<ReviewProps> = ({ dispatch }) => {
                 <>
                   {configureUniverseError && (
                     <div className="review-step__notification review-step__notification--error">
-                      {configureUniverseError.message}
+                      {configureUniverseError}
                     </div>
                   )}
                   {launchError && (
                     <div className="review-step__notification review-step__notification--error">
-                      {launchError.message}
+                      {launchError}
                     </div>
                   )}
                   {finalPayload?.updateInProgress && (

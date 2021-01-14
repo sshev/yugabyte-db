@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { useContext, useEffect, useState } from 'react';
-import { ClusterOperation, WizardContext, WizardStepsFormData } from '../../UniverseWizard';
+import { ClusterOperation, WizardContext, WizardStepsFormData } from '../../../UniverseWizard';
 import {
   CloudType,
   ClusterType,
@@ -99,7 +99,7 @@ interface ConfigureUniverseHook {
   status: ConfigureUniverseStatus;
   isFullMove?: boolean;
   data?: UniverseConfigure;
-  error?: Error;
+  error?: string;
 }
 
 export const useConfigureUniverse = (enabled: boolean): ConfigureUniverseHook => {
@@ -107,7 +107,7 @@ export const useConfigureUniverse = (enabled: boolean): ConfigureUniverseHook =>
   const [status, setStatus] = useState(ConfigureUniverseStatus.Loading);
   const [isFullMove, setIsFullMove] = useState<boolean>();
   const [data, setData] = useState<UniverseConfigure>();
-  const [error, setError] = useState<Error>();
+  const [error, setError] = useState<string>();
   const whenMounted = useWhenMounted();
 
   const configureUniverse = async () => {
@@ -224,7 +224,7 @@ export const useConfigureUniverse = (enabled: boolean): ConfigureUniverseHook =>
       }
     } catch (error) {
       whenMounted(() => {
-        setError(error);
+        setError(error.response?.data?.error || error.message);
         setStatus(ConfigureUniverseStatus.Failure);
       });
     }

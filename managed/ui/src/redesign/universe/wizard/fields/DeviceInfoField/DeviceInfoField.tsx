@@ -60,7 +60,7 @@ const getStorageTypeOptions = (providerCode?: CloudType): StorageTypeOption[] =>
 
 const FIELD_NAME = 'deviceInfo';
 
-const getDeviceInfoFromInstance = (instance: InstanceType): DeviceInfo | null => {
+export const getDeviceInfoFromInstance = (instance: InstanceType): DeviceInfo | null => {
   if (instance.instanceTypeDetails.volumeDetailsList.length) {
     const { volumeDetailsList } = instance.instanceTypeDetails;
 
@@ -104,7 +104,7 @@ export const DeviceInfoField: FC = () => {
 
   const validate = () => true; // TODO
 
-  // flag to disable inputs as editing volume info without changing the instance type makes no sense
+  // flag to disable inputs as editing volume info without changing the instance type is not supported
   const isInstanceTypeChanged =
     isEditMode && getValues('instanceType') === originalFormData.instanceConfig.instanceType;
 
@@ -129,7 +129,7 @@ export const DeviceInfoField: FC = () => {
                   <div className="device-info-field__inputs-block device-info-field__inputs-block--volume">
                     <Input
                       type="number"
-                      // forbid editing volume for onprem providers or when instance type is unchanged
+                      // forbid editing volume for onprem providers or when instance type hasn't changed
                       disabled={
                         formData.cloudConfig.provider?.code === CloudType.onprem ||
                         isInstanceTypeChanged
@@ -146,7 +146,7 @@ export const DeviceInfoField: FC = () => {
                     <span className="device-info-field__x-symbol" />
                     <Input
                       type="number"
-                      // don't allow changing volume size for GCP/onprem providers or when instance type is unchanged
+                      // don't allow changing volume size for GCP/onprem providers or when instance type hasn't changed
                       disabled={
                         formData.cloudConfig.provider?.code === CloudType.gcp ||
                         formData.cloudConfig.provider?.code === CloudType.onprem ||

@@ -86,7 +86,7 @@ const sortAndGroup = (data?: InstanceType[], cloud?: CloudType): GroupType<Insta
   return _.sortBy(result, 'label');
 };
 
-const DEFAULT_INSTANCE_TYPES = {
+export const DEFAULT_INSTANCE_TYPES = {
   [CloudType.aws]: 'c5.large',
   [CloudType.gcp]: 'n1-standard-1',
   [CloudType.azu]: 'Standard_B2s',

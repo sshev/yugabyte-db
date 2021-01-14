@@ -53,7 +53,7 @@ export const CloudConfig: FC<CloudConfigProps> = ({ dispatch }) => {
   return (
     <div className="wizard-step-wrapper">
       <div className="wizard-step-wrapper__stepper">
-        <WizardStepper activeStep={WizardStep.Cloud} clickableTabs={isEditMode} onChange={submit} />
+        <WizardStepper activeStep={WizardStep.Cloud} clickableTabs onChange={submit} />
       </div>
       <div className="wizard-step-wrapper__container">
         <div className="wizard-step-wrapper__col-form">
@@ -167,9 +167,6 @@ export const CloudConfig: FC<CloudConfigProps> = ({ dispatch }) => {
             </Row>
             */}
           </FormProvider>
-        </div>
-        <div className="wizard-step-wrapper__col-summary">
-          <Summary formData={{ ...formData, cloudConfig: formMethods.watch() }} />
         </div>
       </div>
     </div>
