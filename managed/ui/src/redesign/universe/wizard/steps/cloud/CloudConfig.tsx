@@ -12,7 +12,6 @@ import { ReplicaPlacementToggleField } from '../../fields/ReplicaPlacementToggle
 import { PlacementsField, PlacementUI } from '../../fields/PlacementsField/PlacementsField';
 import { WizardAction, WizardContext } from '../../UniverseWizard';
 import { WizardStep, WizardStepper } from '../../compounds/WizardStepper/WizardStepper';
-import { Summary } from '../../compounds/Summary/Summary';
 import '../StepWrapper.scss';
 import './CloudConfig.scss';
 
@@ -64,7 +63,6 @@ export const CloudConfig: FC<CloudConfigProps> = ({ dispatch }) => {
                   <Col xs={12}>
                     <div className="cloud-config__title">
                       <I18n>Cloud Configuration</I18n>
-                      <div className="cloud-config__line" />
                       <div className="cloud-config__reset" onClick={reset}>
                         <I18n>Reset Configuration</I18n>
                       </div>

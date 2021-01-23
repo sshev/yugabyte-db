@@ -1,7 +1,7 @@
 @import '../common';
 
 .yb-uikit-plus-button {
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: $YB_FONT_FAMILY;
   font-size: 14px;
   color: $YB_TEXT_2;
   cursor: pointer;

@@ -18,7 +18,7 @@
     @include input-control();
 
     &[disabled] {
-      background-color: $YB_BORDER_1;
+      background-color: $YB_DISABLED_INPUT_BG;
     }
 
     &[type='number'] {
@@ -40,7 +40,7 @@
     top: 0;
     width: $arrows-width;
     height: 100%;
-    background-color: $YB_INPUT_NUMBERS_BG;
+    background-color: $YB_PAGE_BACKGROUND;
     border-left: 1px solid $YB_BORDER_1;
     display: flex;
     justify-content: space-evenly;
@@ -48,11 +48,11 @@
 
     &--disabled {
       pointer-events: none; // to turn off on hover styles
-      background-color: $YB_BORDER_1;
-      border-left-color: $YB_INPUT_NUMBERS_BG;
+      background-color: $YB_DISABLED_INPUT_BG;
+      border-left-color: $YB_BORDER_1;
 
       & .yb-uikit-input__number-delim {
-        border-top-color: $YB_INPUT_NUMBERS_BG;
+        border-top-color: $YB_BORDER_1;
       }
     }
   }

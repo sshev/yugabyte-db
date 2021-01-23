@@ -7,18 +7,12 @@
   @include wizard-form-text-label();
   @include wizard-form-footer();
 
-  &__line {
-    border-top: 1px solid $YB_BORDER_1;
-    width: 100%;
-    margin-left: 20px;
-    margin-right: 20px;
-  }
-
   &__reset {
     color: $YB_CTA;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: 400;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: $YB_FONT_FAMILY;
     user-select: none;
 
     &:hover {

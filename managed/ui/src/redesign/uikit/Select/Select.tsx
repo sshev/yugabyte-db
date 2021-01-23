@@ -1,36 +1,39 @@
 import React from 'react';
 import ReactSelect, { Styles, Props } from 'react-select';
 
+const FONT_FAMILY = '"Inter", "Helvetica Neue", Arial, sans-serif';
+const FONT_SIZE = '14px';
+
 const customStyles: Styles = {
   control: (provided, state) => ({
     ...provided,
     outline: 'none',
     // hack to show red border on validation error as there's no other way to forward extra prop into styles
     border: `1px solid ${
-      state.selectProps.className === 'validation-error' ? '#FF0000' : '#C5C6CE'
+      state.selectProps.className === 'validation-error' ? '#a94442' : '#C5C6CE'
     }`,
     borderRadius: '7px',
     overflow: 'hidden',
-    minHeight: '44px',
+    minHeight: '42px',
     width: '100%',
-    backgroundColor: state.isDisabled ? '#C5C6CE' : '#fff',
+    backgroundColor: state.isDisabled ? '#eee' : '#fff',
     boxShadow:
-      state.selectProps.className === 'validation-error' ? '0 0 5px rgba(255, 0, 0, 0.2)' : 'none',
+      state.selectProps.className === 'validation-error' ? '0 0 5px rgba(169, 68, 66, 0.2)' : 'none',
     ':hover': {
       border: `1px solid ${
-        state.selectProps.className === 'validation-error' ? '#FF0000' : '#C5C6CE'
+        state.selectProps.className === 'validation-error' ? '#a94442' : '#C5C6CE'
       }`,
       boxShadow:
-        state.selectProps.className === 'validation-error' ? '0 0 5px rgba(255, 0, 0, 0.2)' : 'none'
+        state.selectProps.className === 'validation-error' ? '0 0 5px rgba(169, 68, 66, 0.2)' : 'none'
     },
-    fontSize: '16px',
+    fontSize: FONT_SIZE,
     fontWeight: 400,
-    fontFamily: '"Source Sans Pro", sans-serif'
+    fontFamily: FONT_FAMILY
   }),
   valueContainer: (provided, state) => ({
     ...provided,
     padding: 0,
-    paddingLeft: state.hasValue ? (state.isMulti ? '5px' : '20px') : '20px'
+    paddingLeft: state.hasValue ? (state.isMulti ? '5px' : '12px') : '12px'
   }),
   placeholder: (provided) => ({
     ...provided,
@@ -52,9 +55,9 @@ const customStyles: Styles = {
     // have to provide every padding separately in order to override provided defaults
     paddingTop: '3px',
     paddingBottom: '3px',
-    paddingLeft: '12px',
-    paddingRight: '3px',
-    fontSize: '16px',
+    paddingLeft: '8px',
+    paddingRight: 0,
+    fontSize: FONT_SIZE,
     color: '#546371'
   }),
   multiValueRemove: (provided) => ({
@@ -88,23 +91,23 @@ const customStyles: Styles = {
     height: 0,
     borderLeft: '6px solid transparent',
     borderRight: '6px solid transparent',
-    borderTop: state.isDisabled ? '7px solid #fff' : '7px solid #5463717F',
+    borderTop: '7px solid #5463717F',
     ':hover': {
       borderTopColor: '#546371'
     }
   }),
   menu: (provided) => ({
     ...provided,
-    fontSize: '16px',
+    fontSize: FONT_SIZE,
     fontWeight: 400,
-    fontFamily: '"Source Sans Pro", sans-serif'
+    fontFamily: FONT_FAMILY
   }),
   groupHeading: (provided) => ({
     ...provided,
     color: '#546371',
-    fontSize: '16px',
+    fontSize: FONT_SIZE,
     fontWeight: 700,
-    fontFamily: '"Source Sans Pro", sans-serif'
+    fontFamily: FONT_FAMILY
   })
 };
 

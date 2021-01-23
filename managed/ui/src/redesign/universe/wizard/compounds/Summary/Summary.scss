@@ -10,8 +10,9 @@
   border: 1px solid $YB_BORDER_1;
 
   &__title {
-    font-size: 20px;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 500;
+    font-family: $YB_FONT_FAMILY_HEADERS;
     background-color: $YB_WIZARD_SUMMARY_BACKGROUND;
     mix-blend-mode: multiply;
     padding: 15px 40px;
@@ -23,8 +24,9 @@
   }
 
   &__provider {
-    font-size: 22px;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 500;
+    font-family: $YB_FONT_FAMILY_HEADERS;
     margin-bottom: 15px;
     white-space: nowrap;
     overflow: hidden;
@@ -32,8 +34,8 @@
   }
 
   &__number {
-    font-size: 40px;
-    font-weight: 600;
+    font-size: 32px;
+    font-weight: 400;
     color: $YB_TEXT_1;
     line-height: 1.2;
   }

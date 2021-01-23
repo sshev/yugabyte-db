@@ -5,9 +5,9 @@
   align-items: center;
 
   &__item {
-    font-family: $YB_FONT_FAMILY;
-    font-weight: 600;
-    font-size: 20px;
+    font-family: $YB_FONT_FAMILY_HEADERS;
+    font-weight: 500;
+    font-size: 18px;
     color: $YB_BORDER_1;
     user-select: none;
     margin-right: 50px;
@@ -22,8 +22,8 @@
     }
 
     &--active {
-      font-size: 22px;
-      color: $YB_WIZARD_STEPPER_ACTIVE;
+      font-size: 18px;
+      color: $YB_TEXT_1;
     }
 
     &--clickable {

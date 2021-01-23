@@ -6,10 +6,10 @@
   border: 1px solid $YB_BORDER_1;
   border-radius: $INPUT_BORDER_RADIUS;
   overflow: hidden;
-  height: 44px;
+  height: 42px;
 
   &--disabled {
-    background-color: $YB_BORDER_1;
+    background-color: $YB_DISABLED_INPUT_BG;
     pointer-events: none;
   }
 
@@ -20,8 +20,8 @@
     align-items: center;
     justify-content: center;
     color: $YB_TEXT_1;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 400;
     font-family: $YB_FONT_FAMILY;
     cursor: pointer;
     user-select: none;
