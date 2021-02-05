@@ -1,43 +1,21 @@
 $YB_PAGE_BACKGROUND: #fff;
 $YB_UNIVERSE_WIZARD_FORM_BACKGROUND: #fff;
 $YB_WIZARD_SUMMARY_BACKGROUND: #f1f8f3;
-$YB_BORDER_1: #c5c6ce;
+$YB_BORDER_1: #dedee0;
 $YB_BORDER_2: #707070; // button frame
 $YB_DISABLED_INPUT_BG: #eee;
-$YB_TEXT_1: #546371;
-$YB_TEXT_2: #35414c;
+$YB_TEXT_1: #555;
+$YB_TEXT_2: #333;
 $YB_TEXT_SUCCESS: #3f8a5a;
 $YB_WIZARD_STEPPER_ACTIVE: #4979cc;
 $YB_CTA: #ff6e42;
+$YB_ORANGE: #ef5824;
 $YB_ERROR: #a94442;
 $YB_WARNING: #FF9300;
 
 $INPUT_BORDER_RADIUS: 7px;
-$INPUT_HEIGHT: 42px;
 $YB_FONT_FAMILY: 'Inter', 'Helvetica Neue', Arial, sans-serif;
 $YB_FONT_FAMILY_HEADERS: 'Rubik', 'Helvetica Neue', sans-serif;
-
-@mixin input-wrapper() {
-  border: 1px solid $YB_BORDER_1;
-  border-radius: $INPUT_BORDER_RADIUS;
-  position: relative;
-  overflow: hidden;
-  height: $INPUT_HEIGHT;
-}
-
-@mixin input-control() {
-  width: 100%;
-  height: 100%;
-  border: none;
-  padding: 0 12px;
-  font-size: 14px;
-  font-weight: 400;
-  font-family: $YB_FONT_FAMILY;
-  color: $YB_TEXT_1;
-  &::placeholder {
-    color: rgba($YB_TEXT_1, 0.5);
-  }
-}
 
 @mixin chevron-up() {
   width: 0;

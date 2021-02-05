@@ -2,20 +2,40 @@
 
 .yb-uikit-input {
   $arrows-width: 26px;
+  $input-height: 42px;
+  $inner-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
 
-  &--disabled {
-    background-color: $YB_BORDER_1;
-  }
+  position: relative;
+  height: $input-height;
 
-  &--invalid {
-    border-color: $YB_ERROR;
-    box-shadow: 0 0 5px rgba($YB_ERROR, 0.2);
-  }
+  &__input {
+    border: 1px solid $YB_BORDER_1;
+    border-radius: $INPUT_BORDER_RADIUS;
+    width: 100%;
+    height: 100%;
+    padding: 0 12px;
+    font-size: 14px;
+    font-weight: 400;
+    font-family: $YB_FONT_FAMILY;
+    color: $YB_TEXT_1;
+    box-shadow: $inner-shadow;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 
-  @include input-wrapper();
+    &--invalid {
+      border-color: $YB_ERROR;
+      &:focus {
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px $YB_ERROR;
+      }
+    }
 
-  input {
-    @include input-control();
+    &:not(&--invalid):focus {
+      border-color: rgba($YB_ORANGE, 0.5);
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba($YB_ORANGE, 0.2);
+    }
+
+    &::placeholder {
+      color: rgba($YB_TEXT_1, 0.5);
+    }
 
     &[disabled] {
       background-color: $YB_DISABLED_INPUT_BG;
@@ -36,12 +56,15 @@
 
   &__number-controls {
     position: absolute;
-    right: 0;
-    top: 0;
+    right: 1px;
+    top: 1px;
     width: $arrows-width;
-    height: 100%;
+    height: $input-height - 2px;
     background-color: $YB_PAGE_BACKGROUND;
     border-left: 1px solid $YB_BORDER_1;
+    border-top-right-radius: $INPUT_BORDER_RADIUS;
+    border-bottom-right-radius: $INPUT_BORDER_RADIUS;
+    box-shadow: $inner-shadow;
     display: flex;
     justify-content: space-evenly;
     flex-direction: column;

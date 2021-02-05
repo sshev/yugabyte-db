@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import clsx from 'clsx';
 import React, { FC, useRef } from 'react';
 import './Input.scss';
@@ -35,13 +36,16 @@ export const Input: FC<InputProps> = (props) => {
   };
 
   return (
-    <div
-      className={clsx(props.className, 'yb-uikit-input', {
-        'yb-uikit-input--disabled': props.disabled,
-        'yb-uikit-input--invalid': props.invalid
-      })}
-    >
-      <input ref={input} type="text" autoComplete="off" {...props} />
+    <div className={clsx('yb-uikit-input', props.className)}>
+      <input
+        ref={input}
+        type="text"
+        autoComplete="off"
+        className={clsx('yb-uikit-input__input', {
+          'yb-uikit-input__input--invalid': props.invalid
+        })}
+        {..._.omit(props, 'className')}
+      />
       {props.type === 'number' && (
         <div
           className={clsx('yb-uikit-input__number-controls', {

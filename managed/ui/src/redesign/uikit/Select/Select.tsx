@@ -1,30 +1,53 @@
 import React from 'react';
-import ReactSelect, { Styles, Props } from 'react-select';
+import ReactSelect, { Styles, Props, ControlProps } from 'react-select';
 
 const FONT_FAMILY = '"Inter", "Helvetica Neue", Arial, sans-serif';
 const FONT_SIZE = '14px';
+
+const YB_ERROR = '#a94442';
+const YB_BORDER_1 = '#dedee0';
+const YB_DISABLED_INPUT_BG = '#eee';
+const YB_PAGE_BACKGROUND = '#fff';
+const YB_TEXT_1 = '#555555';
+const YB_ORANGE = '#ef5824';
+const INNER_SHADOW = 'inset 0 1px 1px rgba(0, 0, 0, .075)';
+
+// convert rgba('#555555', 0.2) to proper css string 'rgba(85, 85, 85, 0.2)'
+const rgba = (hex: string, opacity: number): string => {
+  const rgbArray = hex.slice(1).match(/.{1,2}/g) || []; // '#555555' --> ['55', '55', '55]
+  const rgb = rgbArray.map((item) => parseInt(item, 16)); // ['55', '55', '55] --> [85, 85, 85]
+  return `rgba(${rgb.join(', ')}, ${opacity})`;
+};
+
+// there's no other way to forward extra prop into styles, so use hack with a dummy class name
+const isInvalid = (state: ControlProps<{}>): boolean =>
+  state.selectProps.className === 'validation-error';
 
 const customStyles: Styles = {
   control: (provided, state) => ({
     ...provided,
     outline: 'none',
-    // hack to show red border on validation error as there's no other way to forward extra prop into styles
-    border: `1px solid ${
-      state.selectProps.className === 'validation-error' ? '#a94442' : '#C5C6CE'
-    }`,
+    borderWidth: '1px',
+    borderStyle: 'solid',
     borderRadius: '7px',
+    borderColor: state.isFocused ? rgba(YB_ORANGE, 0.5) : isInvalid(state) ? YB_ERROR : YB_BORDER_1,
     overflow: 'hidden',
     minHeight: '42px',
     width: '100%',
-    backgroundColor: state.isDisabled ? '#eee' : '#fff',
-    boxShadow:
-      state.selectProps.className === 'validation-error' ? '0 0 5px rgba(169, 68, 66, 0.2)' : 'none',
+    transition: 'border-color .15s ease-in-out, box-shadow .15s ease-in-out',
+    backgroundColor: state.isDisabled ? YB_DISABLED_INPUT_BG : YB_PAGE_BACKGROUND,
+    boxShadow: state.isFocused
+      ? isInvalid(state)
+        ? `${INNER_SHADOW}, 0 0 6px ${YB_ERROR}`
+        : `${INNER_SHADOW}, 0 0 8px ${rgba(YB_ORANGE, 0.2)}`
+      : INNER_SHADOW,
     ':hover': {
-      border: `1px solid ${
-        state.selectProps.className === 'validation-error' ? '#a94442' : '#C5C6CE'
-      }`,
-      boxShadow:
-        state.selectProps.className === 'validation-error' ? '0 0 5px rgba(169, 68, 66, 0.2)' : 'none'
+      // duplicate non-hover styles
+      borderColor: state.isFocused
+        ? rgba(YB_ORANGE, 0.5)
+        : isInvalid(state)
+        ? YB_ERROR
+        : YB_BORDER_1
     },
     fontSize: FONT_SIZE,
     fontWeight: 400,
@@ -37,17 +60,17 @@ const customStyles: Styles = {
   }),
   placeholder: (provided) => ({
     ...provided,
-    color: '#546371',
+    color: YB_TEXT_1,
     opacity: 0.5
   }),
   singleValue: (provided) => ({
     ...provided,
-    color: '#546371'
+    color: YB_TEXT_1
   }),
   multiValue: (provided) => ({
     ...provided,
-    backgroundColor: '#E8E9F3',
-    borderRadius: '7px',
+    backgroundColor: '#e6e6e6',
+    borderRadius: '2px',
     overflow: 'hidden'
   }),
   multiValueLabel: (provided) => ({
@@ -58,29 +81,29 @@ const customStyles: Styles = {
     paddingLeft: '8px',
     paddingRight: 0,
     fontSize: FONT_SIZE,
-    color: '#546371'
+    color: YB_TEXT_1
   }),
   multiValueRemove: (provided) => ({
     ...provided,
     cursor: 'pointer',
-    color: '#5463717F',
+    color: rgba(YB_TEXT_1, 0.5),
     ':hover': {
-      color: '#546371'
+      color: YB_TEXT_1
     }
   }),
   clearIndicator: (provided) => ({
     ...provided,
     cursor: 'pointer',
-    color: '#5463717F',
+    color: rgba(YB_TEXT_1, 0.5),
     ':hover': {
-      color: '#546371'
+      color: YB_TEXT_1
     }
   }),
   indicatorSeparator: (provided) => ({
     ...provided,
-    backgroundColor: '#C5C6CE'
+    backgroundColor: YB_BORDER_1
   }),
-  dropdownIndicator: (provided, state) => ({
+  dropdownIndicator: (provided) => ({
     ...provided,
     cursor: 'pointer',
     marginTop: '2px',
@@ -91,9 +114,9 @@ const customStyles: Styles = {
     height: 0,
     borderLeft: '6px solid transparent',
     borderRight: '6px solid transparent',
-    borderTop: '7px solid #5463717F',
+    borderTop: `7px solid ${rgba(YB_TEXT_1, 0.5)}`,
     ':hover': {
-      borderTopColor: '#546371'
+      borderTopColor: YB_TEXT_1
     }
   }),
   menu: (provided) => ({
@@ -104,7 +127,7 @@ const customStyles: Styles = {
   }),
   groupHeading: (provided) => ({
     ...provided,
-    color: '#546371',
+    color: YB_TEXT_1,
     fontSize: FONT_SIZE,
     fontWeight: 700,
     fontFamily: FONT_FAMILY
