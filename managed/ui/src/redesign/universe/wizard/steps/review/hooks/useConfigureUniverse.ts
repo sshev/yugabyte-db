@@ -11,10 +11,10 @@ import {
   PlacementRegion,
   UniverseConfigure,
   UniverseDetails
-} from '../../../../helpers/dtos';
-import { PlacementUI } from '../../fields/PlacementsField/PlacementsField';
-import { api } from '../../../../helpers/api';
-import { useWhenMounted } from '../../../../helpers/hooks';
+} from '../../../../../helpers/dtos';
+import { PlacementUI } from '../../../fields/PlacementsField/PlacementsField';
+import { api } from '../../../../../helpers/api';
+import { useWhenMounted } from '../../../../../helpers/hooks';
 
 const tagsToArray = (tags?: FlagsObject): FlagsArray => {
   const result = [];

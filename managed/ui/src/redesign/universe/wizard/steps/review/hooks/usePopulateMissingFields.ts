@@ -42,7 +42,7 @@ export const usePopulateMissingFields = (
   // load instance type for a given provider and populate instanceType and deviceInfo
   const { isLoading: isInstanceTypeLoading } = useQuery(
     [QUERY_KEY.getInstanceTypes, formData.cloudConfig.provider?.uuid],
-    api.getInstanceTypes,
+    () => api.getInstanceTypes(formData.cloudConfig.provider?.uuid),
     {
       enabled: !formData.instanceConfig.instanceType && !!formData.cloudConfig.provider?.uuid,
       onSuccess: (data) => {
@@ -74,7 +74,7 @@ export const usePopulateMissingFields = (
   // get access key  for a given provider and take first item from the array (currently there's single access key per provider)
   const { isLoading: isAccessKeyLoading } = useQuery(
     [QUERY_KEY.getAccessKeys, formData.cloudConfig.provider?.uuid],
-    api.getAccessKeys,
+    () => api.getAccessKeys(formData.cloudConfig.provider?.uuid),
     {
       enabled: !formData.hiddenConfig.accessKeyCode && !!formData.cloudConfig.provider?.uuid,
       onSuccess: (data) => {
