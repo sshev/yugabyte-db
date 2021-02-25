@@ -119,22 +119,19 @@ export const InstanceConfig: FC<InstanceConfigProps> = ({ dispatch }) => {
                 <I18n>Cancel</I18n>
               </Button>
               <Button
-                chevronLeft
                 className="instance-config__footer-btn"
                 onClick={() => submit(WizardStep.Cloud)}
               >
                 <I18n>Previous</I18n>
               </Button>
               <Button
-                isCTA
+                cta
                 className="instance-config__footer-btn"
                 onClick={() => submit(WizardStep.Review)}
               >
                 <I18n>Review and Launch</I18n>
               </Button>
               <Button
-                isCTA
-                chevronRight
                 className="instance-config__footer-btn"
                 onClick={() => submit(WizardStep.Db)}
               >

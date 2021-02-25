@@ -115,22 +115,19 @@ export const DBConfig: FC<DBConfigProps> = ({ dispatch }) => {
                 <I18n>Cancel</I18n>
               </Button>
               <Button
-                chevronLeft
                 className="db-config__footer-btn"
                 onClick={() => submit(WizardStep.Instance)}
               >
                 <I18n>Previous</I18n>
               </Button>
               <Button
-                isCTA
+                cta
                 className="db-config__footer-btn"
                 onClick={() => submit(WizardStep.Review)}
               >
                 <I18n>Review and Launch</I18n>
               </Button>
               <Button
-                isCTA
-                chevronRight
                 className="db-config__footer-btn"
                 onClick={() => submit(WizardStep.Security)}
               >

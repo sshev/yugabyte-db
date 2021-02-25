@@ -152,14 +152,13 @@ export const SecurityConfig: FC<SecurityConfigProps> = ({ dispatch }) => {
                 <I18n>Cancel</I18n>
               </Button>
               <Button
-                chevronLeft
                 className="security-config__footer-btn"
                 onClick={() => submit(WizardStep.Db)}
               >
                 <I18n>Previous</I18n>
               </Button>
               <Button
-                isCTA
+                cta
                 className="security-config__footer-btn"
                 onClick={() => submit(WizardStep.Review)}
               >

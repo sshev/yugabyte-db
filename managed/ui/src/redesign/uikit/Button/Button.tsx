@@ -1,30 +1,25 @@
 import clsx from 'clsx';
+import _ from 'lodash';
 import React, { FC } from 'react';
+import { Button as BootstrapButton, ButtonProps as BootstrapButtonProps } from 'react-bootstrap';
 import './Button.scss';
 
 interface CustomButtonProps {
-  isCTA?: boolean;
-  chevronLeft?: boolean;
-  chevronRight?: boolean;
+  cta?: boolean;
 }
 
-type ButtonProps = JSX.IntrinsicElements['button'] & CustomButtonProps;
+type ButtonProps = BootstrapButtonProps & CustomButtonProps;
 
-export const Button: FC<ButtonProps> = ({
-  isCTA,
-  chevronLeft,
-  chevronRight,
-  children,
-  ...props
-}) => {
-  const extendedProps = {
-    ...props,
-    className: clsx(props.className, 'yb-uikit-button', {
-      'yb-uikit-button--cta': isCTA,
-      'yb-uikit-button--chevron-left': chevronLeft,
-      'yb-uikit-button--chevron-right': chevronRight
-    })
-  };
+export const Button: FC<ButtonProps> = ({ cta, children, ...props }) => {
+  // omit explicitly applied props
+  const rest = _.omit(props, ['cta', 'className', 'children']);
 
-  return <button {...extendedProps}>{children}</button>;
+  return (
+    <BootstrapButton
+      bsClass={clsx('yb-uikit-button', props.className, 'btn', cta && 'btn-orange')}
+      {...rest}
+    >
+      {children}
+    </BootstrapButton>
+  );
 };

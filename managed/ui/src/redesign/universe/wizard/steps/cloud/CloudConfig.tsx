@@ -142,8 +142,7 @@ export const CloudConfig: FC<CloudConfigProps> = ({ dispatch }) => {
                 <I18n>Cancel</I18n>
               </Button>
               <Button
-                isCTA
-                chevronRight
+                cta
                 className="cloud-config__footer-btn"
                 onClick={() => submit(WizardStep.Instance)}
               >

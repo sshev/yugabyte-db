@@ -486,7 +486,6 @@ export const Review: FC<ReviewProps> = ({ dispatch }) => {
               <I18n>Cancel</I18n>
             </Button>
             <Button
-              chevronLeft
               className="review-step__footer-btn"
               onClick={() => jumpToStep(WizardStep.Security)}
             >
@@ -494,7 +493,7 @@ export const Review: FC<ReviewProps> = ({ dispatch }) => {
             </Button>
             {!isLoading && (
               <Button
-                isCTA
+                cta
                 className="review-step__footer-btn"
                 onClick={launchUniverse}
                 disabled={!isLaunchAllowed}
