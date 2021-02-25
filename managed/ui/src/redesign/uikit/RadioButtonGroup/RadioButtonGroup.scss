@@ -1,12 +1,13 @@
-@import '../../../../uikit/common';
+@import '../common';
 
-.replication-factor {
+.yb-uikit-rb-group {
   display: inline-flex;
   height: 42px;
 
   &__item {
-    width: 40px;
+    min-width: 40px;
     height: auto;
+    padding: 0 15px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -46,6 +47,10 @@
       &:first-child {
         border-color: $YB_ORANGE;
       }
+    }
+
+    &--selected#{&}--disabled {
+      opacity: 0.65;
     }
 
     &:hover:not(&--disabled) {
