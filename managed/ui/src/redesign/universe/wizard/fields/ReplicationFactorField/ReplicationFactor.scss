@@ -2,16 +2,7 @@
 
 .replication-factor {
   display: inline-flex;
-  background-color: $YB_PAGE_BACKGROUND;
-  border: 1px solid $YB_BORDER_1;
-  border-radius: $INPUT_BORDER_RADIUS;
-  overflow: hidden;
   height: 42px;
-
-  &--disabled {
-    background-color: $YB_DISABLED_INPUT_BG;
-    pointer-events: none;
-  }
 
   &__item {
     width: 40px;
@@ -21,18 +12,49 @@
     justify-content: center;
     color: $YB_TEXT_1;
     font-size: 14px;
-    font-weight: 400;
+    font-weight: 500;
     font-family: $YB_FONT_FAMILY;
     cursor: pointer;
     user-select: none;
+    transition: all 0.125s;
+    background-color: $YB_PAGE_BACKGROUND;
+    border-top: 1px solid $YB_BORDER_1;
+    border-bottom: 1px solid $YB_BORDER_1;
+    border-right: 1px solid $YB_BORDER_1;
 
-    &:not(:last-child) {
-      border-right: 1px solid $YB_BORDER_1;
+    &:first-child {
+      border-left: 1px solid $YB_BORDER_1;
+      border-top-left-radius: $INPUT_BORDER_RADIUS;
+      border-bottom-left-radius: $INPUT_BORDER_RADIUS;
+    }
+
+    &:last-child {
+      border-top-right-radius: $INPUT_BORDER_RADIUS;
+      border-bottom-right-radius: $INPUT_BORDER_RADIUS;
+    }
+
+    &--disabled {
+      background-color: $YB_DISABLED_INPUT_BG;
+      cursor: default;
     }
 
     &--selected {
       color: $YB_PAGE_BACKGROUND;
-      background-color: $YB_CTA;
+      background-color: $YB_ORANGE;
+      border-color: $YB_ORANGE;
+
+      &:first-child {
+        border-color: $YB_ORANGE;
+      }
+    }
+
+    &:hover:not(&--disabled) {
+      background-color: darken($YB_PAGE_BACKGROUND, 10%);
+    }
+
+    &--selected:hover:not(&--disabled) {
+      background-color: darken($YB_ORANGE, 10%);
+      border-color: darken($YB_ORANGE, 10%);
     }
   }
 }

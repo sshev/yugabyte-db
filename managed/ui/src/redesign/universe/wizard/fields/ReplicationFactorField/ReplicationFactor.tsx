@@ -16,17 +16,19 @@ export const ReplicationFactor: FC<ReplicationFactorProps> = ({
   disabled
 }) => {
   const onClick = (newValue: number) => {
-    if (newValue !== value) onChange(newValue);
+    if (!disabled && newValue !== value) onChange(newValue);
   };
 
   return (
-    <div className={clsx('replication-factor', { 'replication-factor--disabled': disabled })}>
+    <div className="replication-factor">
       {options.map((option) => (
         <div
           key={option}
-          className={clsx('replication-factor__item', {
-            'replication-factor__item--selected': value === option
-          })}
+          className={clsx(
+            'replication-factor__item',
+            value === option && 'replication-factor__item--selected',
+            disabled && 'replication-factor__item--disabled'
+          )}
           onClick={() => onClick(option)}
         >
           {option}
