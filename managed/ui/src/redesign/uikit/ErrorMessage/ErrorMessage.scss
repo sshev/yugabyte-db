@@ -1,10 +1,9 @@
 @import '../common';
 
 .yb-uikit-field-validation-error {
-  position: absolute;
   color: $YB_ERROR;
   font-size: 13px;
-  left: 0;
+  margin-top: 5px;
   white-space: nowrap;
   text-transform: capitalize;
 }

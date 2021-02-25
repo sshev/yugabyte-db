@@ -30,24 +30,24 @@ const customStyles: Styles = {
     borderWidth: '1px',
     borderStyle: 'solid',
     borderRadius: '7px',
-    borderColor: state.isFocused ? rgba(YB_ORANGE, 0.5) : isInvalid(state) ? YB_ERROR : YB_BORDER_1,
+    borderColor: isInvalid(state)
+      ? YB_ERROR
+      : (state.isFocused ? rgba(YB_ORANGE, 0.5) : YB_BORDER_1),
     overflow: 'hidden',
     minHeight: '42px',
     width: '100%',
-    transition: 'border-color .15s ease-in-out, box-shadow .15s ease-in-out',
     backgroundColor: state.isDisabled ? YB_DISABLED_INPUT_BG : YB_PAGE_BACKGROUND,
     boxShadow: state.isFocused
-      ? isInvalid(state)
+      ? (isInvalid(state)
         ? `${INNER_SHADOW}, 0 0 6px ${YB_ERROR}`
         : `${INNER_SHADOW}, 0 0 8px ${rgba(YB_ORANGE, 0.2)}`
+      )
       : INNER_SHADOW,
     ':hover': {
-      // duplicate non-hover styles
-      borderColor: state.isFocused
-        ? rgba(YB_ORANGE, 0.5)
-        : isInvalid(state)
+      // no special styling for on hover state, so just duplicate non hover styles
+      borderColor: isInvalid(state)
         ? YB_ERROR
-        : YB_BORDER_1
+        : (state.isFocused ? rgba(YB_ORANGE, 0.5) : YB_BORDER_1),
     },
     fontSize: FONT_SIZE,
     fontWeight: 400,
